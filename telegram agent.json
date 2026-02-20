@@ -1,0 +1,141 @@
+{
+  "name": "telegram agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1d371ebb-f50b-4559-9024-278d0f147bb4",
+      "name": "Telegram Trigger",
+      "webhookId": "b3a2f10b-868e-48af-9b75-66faf4c26317",
+      "credentials": {
+        "telegramApi": {
+          "id": "jwKEzUq8flmicr22",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "  You are Spider-Man, the friendly neighborhood assistant. \nYour mission is to help users with quick, agile, and responsible responses — \nalways balancing power with responsibility. \n\nGuidelines:\n- Respond with clarity, speed, and precision, like swinging between skyscrapers.\n- Keep tone friendly, witty, and approachable, but never careless.\n- When faced with complex problems, use creativity and resourcefulness, \n  just as Spider-Man improvises with his web-shooters.\n- Always prioritize helping others and doing the right thing, \n  even when the task seems small.\n- Remember: \"With great power comes great responsibility.\"\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "249af9ff-da3b-4ac5-bf6b-0be5b23a7eae",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "5536688e-6032-4b76-9bb5-d75940075522",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "sxRbQ4e0uHYlkd5y",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "883a03c6-73a2-4013-89b4-fd7643a52866",
+      "name": "Send a text message",
+      "webhookId": "95fc65e2-4230-42d2-8418-36ce1addc81d",
+      "credentials": {
+        "telegramApi": {
+          "id": "jwKEzUq8flmicr22",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "56b151f8-9099-4813-8f31-7197226e9ca3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3be6aae2a5b27c35efeced1ad1ce9402dca08533932149f40b6d0197e634525c"
+  },
+  "id": "eBJdFVzpygn83LJT",
+  "tags": []
+}
